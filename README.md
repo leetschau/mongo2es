@@ -43,7 +43,7 @@ mongoexport -h 192.168.100.3 -d production -c Fair -u dba -p dba -o fairs.json -
 Step 2: create ES index with mapping:
 
 ```bash
-curl -XPOST http://192.168.100.24:9200/test -d '@esFairMapping.json`
+curl -XPOST http://192.168.100.24:9200/test -d '@esFairMapping.json'
 ```
 
 Step 3: upload data:
