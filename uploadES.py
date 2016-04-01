@@ -13,11 +13,11 @@ if len(sys.argv) != 4:
 inp = sys.argv[1]
 baseUrl = 'http://192.168.100.24:9200/%s/%s/' % (sys.argv[2], sys.argv[3])
 
-def dateObj(date):
+def dateObj(date) -> str:
     DEFAULT_DATE = '2011-11-11T00:00:00.000Z'
     if isinstance(date, dict) and '$date' in date:
         return date['$date']
-    if isinstance(date, str): # use "basestring" for Python 2.x
+    if isinstance(date, str):
         return date
     return DEFAULT_DATE
 
