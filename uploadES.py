@@ -2,8 +2,7 @@ import requests
 import json
 import sys
 
-cmdFmt = 'python3 ' + sys.argv[0] +\
-            ' <input-file> <output-file> <index-name> <type-name>'
+cmdFmt = 'python3 ' + sys.argv[0] + ' <input-file> <index-name> <type-name>'
 example = 'python3 uploadES.py fairs.json production Fair'
 if len(sys.argv) != 4:
     print('Bad format, upload cancelled.')
