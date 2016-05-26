@@ -5,7 +5,7 @@ import re
 
 cmdFmt = 'python3 ' + sys.argv[0] + ' <input-file> <es-server-ip> <index-name> <type-name>'
 example = 'python3 uploadES.py fairs.json 192.168.100.24 production Fair'
-if len(sys.argv) != 4:
+if len(sys.argv) != len(example.split(' ')) -1:
     print('Bad format, upload cancelled.')
     print('Format:\n%s\nExample:\n%s' % (cmdFmt, example))
     sys.exit(1)
