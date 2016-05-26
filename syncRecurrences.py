@@ -3,15 +3,15 @@ import json
 import sys
 import re
 
-cmdFmt = 'python3 ' + sys.argv[0] + ' <input-file> <index-name> <type-name>'
-example = 'python3 uploadES.py fairs.json production Fair'
+cmdFmt = 'python3 ' + sys.argv[0] + ' <input-file> <es-server-ip> <index-name> <type-name>'
+example = 'python3 uploadES.py fairs.json 192.168.100.24 production Fair'
 if len(sys.argv) != 4:
     print('Bad format, upload cancelled.')
     print('Format:\n%s\nExample:\n%s' % (cmdFmt, example))
     sys.exit(1)
 
 inp = sys.argv[1]
-baseUrl = 'http://192.168.100.24:9200/%s/%s/' % (sys.argv[2], sys.argv[3])
+baseUrl = 'http://%s:9200/%s/%s/' % (sys.argv[2], sys.argv[3]), sys.argv[4]
 
 
 def conv_date(afair: str) -> str:
