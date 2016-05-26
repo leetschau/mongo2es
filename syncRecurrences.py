@@ -11,7 +11,7 @@ if len(sys.argv) != len(example.split(' ')) -1:
     sys.exit(1)
 
 inp = sys.argv[1]
-baseUrl = 'http://%s:9200/%s/%s/' % (sys.argv[2], sys.argv[3]), sys.argv[4]
+baseUrl = 'http://%s:9200/%s/%s/' % (sys.argv[2], sys.argv[3], sys.argv[4])
 
 
 def conv_date(afair: str) -> str:
