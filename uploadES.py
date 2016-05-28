@@ -14,6 +14,8 @@ if len(sys.argv) != len(example.split(' ')) - 1:
 inp = sys.argv[1]
 baseUrl = 'http://%s:9200/%s/%s/' % (sys.argv[2], sys.argv[3], sys.argv[4])
 
+DEFAULT_DATE = '"1990-11-11T00:00:00.000Z"'
+
 
 def conv_date(afair: str) -> str:
     """Convert date format in JSON file created from MongoDB
@@ -21,7 +23,6 @@ def conv_date(afair: str) -> str:
         "timeStart":{"$date":"2015-09-01T00:00:00.000Z"}
     to: "timeStart":"2015-09-01T00:00:00.000Z"
     """
-    DEFAULT_DATE = '"2011-11-11T00:00:00.000Z"'
     trans_normal = re.sub(
             r'{"\$date":("2\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d.\d\d\dZ")}',
             r'\1',
@@ -30,13 +31,18 @@ def conv_date(afair: str) -> str:
     return re.sub(r'{"\$date":(".*?")}', DEFAULT_DATE, trans_normal)
 
 with open(inp) as f:
+    RECUR = 'recurrence'
+    TIMES = 'timeStart'
     cnt = 0
     for line in f:
         fair = json.loads(conv_date(line.strip()))
-        recs = fair['recurrence']
-        fair['recurrence'] = sorted(recs,
-                                    key=lambda rec: rec['timeStart'],
-                                    reverse=True)
+        if RECUR not in fair:
+            continue
+        recs = fair[RECUR]
+        fair[RECUR] = sorted(recs,
+                             key=lambda rec: rec[TIMES] if TIMES in rec
+                             else DEFAULT_DATE,
+                             reverse=True)
         fairID = fair['_id']
         cnt = cnt + 1
         print('uploading No. %d: %s ...' % (cnt, fairID))
