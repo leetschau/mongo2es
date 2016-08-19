@@ -1,34 +1,44 @@
-# Introduction
-
 # Sync with RESTful API of ES
 
-Step 1: export MongoDB data to json file:
+Sync all documents in MongoDB into Elasticsearch database.
+The fair's recurrences will be sorted in descending order by the 'timeStart' field.
+
+# Usage
+
+First, export MongoDB documents to a json file:
 
 ```bash
 mongoexport -h 192.168.100.3 -d production -c Fair -u dba -p dba -o fairs.json
 ```
 
-Or only export some with `--limit` option:
+Then upload data to Elasticsearch, exclude all the docs whose 'recurrence.timeStart'
+property contains 2013, 2014 or 2015.
 
 ```bash
-mongoexport -h 192.168.100.3 -d production -c Fair -u dba -p dba -o fairs.json --limit 100
+python3 uploadES.py fairs.json --server 123,34.45.6 --index production --type shops --exclude 2008,2009,2010,2011,2012,2013,2014,2015
 ```
 
-Step 2: create ES index with mapping:
+Run `python3 uploadES.py -h` for help.
 
-```bash
-curl -XPOST http://192.168.100.24:9200/test -d '@esFairMapping.json'
-```
+# Notes
 
-Step 3: upload data:
+## Partial Export
 
-Modify parameter names in uploadES.py and run:
+You can export some of the MongoDB documents with
+`mongoexport -h 192.168.100.3 -d production -c Fair -u dba -p dba -o fairs.json --limit 100`.
 
-```bash
-python uploadES.py
-```
+## When uploading fails
 
-## Note
+If some documents can't be uploaded to ES server for the mapping mismatch,
+try the following steps:
+
+1. Get the current mapping, check it and modify it when necessary;
+
+1. Buld a new index, set its mappings with the file you created in above step;
+
+1. Upload your data with this script.
+
+## Debug
 
 To verify the converted date format, replace all codes below `for line in f:`
 in file uploadES.py with `print(conv_date(line.strip()))`.
@@ -37,30 +47,3 @@ Save the converting result in file "rightDate.json":
 Importing it into a temporary database:
 `mongoimport -d test -c strDate --type json --file rightDate.json`
 The date is converted successfully if no errors occurs.
-
-# (deprecated) upload with elasticdump
-
-Step 1: export MongoDB data to json file:
-
-```bash
-mongoexport -h 192.168.100.3 -d production -c Fair -u dba -p dba -o fairs.json --jsonArray
-```
-
-Or select some data to export:
-```bash
-mongoexport -h 192.168.100.3 -d production -c Fair -u dba -p dba -q '{_id: "9Jox43DBwBznf9t3X"}' -o afair.json --jsonArray
-```
-
-Step 2: convert them to ES format:
-
-```bash
-node main.js <input-file> <output-file> <index-name> <type-name>
-```
-
-Step 3: upload to ES with elasticdump:
-
-```bash
-npm install -g elasticdump
-elasticdump --bulk=true --input=./esfs.json --output=http://192.168.100.24:9200/
-```
-
